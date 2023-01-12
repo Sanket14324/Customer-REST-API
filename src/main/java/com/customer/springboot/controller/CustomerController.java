@@ -4,6 +4,7 @@ import com.customer.springboot.exception.ResourceNotFoundException;
 import com.customer.springboot.model.Customer;
 import com.customer.springboot.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,6 +50,16 @@ public class CustomerController {
 
         customerRepository.save(updateCustomer);
         return ResponseEntity.ok(updateCustomer);
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<HttpStatus> deleteCustomerById(@PathVariable Long id){
+        Customer customer = customerRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not exist with id :"+id));
+
+        customerRepository.delete(customer);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 }
