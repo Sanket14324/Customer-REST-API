@@ -34,10 +34,21 @@ public class CustomerController {
         List<Customer> customerList = customerRepository.findAll().stream().filter(customer -> Objects.equals(customer.getName(), name))
                 .collect(Collectors.toList());
         if(customerList.size() == 0){
-            throw new ResourceNotFoundException("Employee not exist with name :"+name);
+            throw new ResourceNotFoundException("Customer not exist with name :"+name);
         }
 
         return ResponseEntity.ok(customerList);
+    }
+    @PutMapping("{id}")
+    public ResponseEntity<Customer> updateCustomerById(@PathVariable Long id,@RequestBody Customer customerDetails ){
+        Customer updateCustomer = customerRepository.findById(id)
+                .orElseThrow(() ->new  ResourceNotFoundException("Customer not exist with id:"+id));
+
+        updateCustomer.setName(customerDetails.getName());
+        updateCustomer.setAge(customerDetails.getAge());
+
+        customerRepository.save(updateCustomer);
+        return ResponseEntity.ok(updateCustomer);
     }
 
 }
